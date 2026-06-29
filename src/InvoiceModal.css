@@ -1,0 +1,273 @@
+/* Modal ka piche wala sleti parda (Overlay) */
+.invoice-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1500;
+  padding: 20px;
+}
+
+/* Main Bill ka dabba */
+.invoice-modal {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  width: 600px; /* Signature aur Address ke liye width thodi badha di hai */
+  max-width: 95%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  font-family: Arial, sans-serif;
+  max-height: 95vh;
+  overflow-y: auto;
+}
+
+/* Header Text ke liye */
+.invoice-header {
+  text-align: center;
+  border-bottom: 2px solid #333;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.invoice-header h2.shop-title {
+  margin: 0 0 5px 0;
+  color: #222;
+  font-size: 26px;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.invoice-subtitle {
+  margin: 0 0 5px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+/* Dukan ka Address aur Mobile */
+.shop-address, .shop-contact {
+  margin: 2px 0;
+  font-size: 13px;
+  color: #444;
+}
+
+.invoice-meta-box {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+  font-size: 14px;
+  background: #f5f5f5;
+  padding: 6px 12px;
+  border-radius: 4px;
+}
+.invoice-meta-box p {
+  margin: 0;
+}
+
+/* Grahak ki jankari wala dabba */
+.invoice-customer-info {
+  background: #f9f9f9;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  border-left: 4px solid #007bff;
+}
+
+.invoice-customer-info h3 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #555;
+  text-transform: uppercase;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 4px;
+  text-align: left;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  font-size: 14px;
+  text-align: left;
+}
+
+.info-grid p {
+  margin: 0;
+}
+
+/* Table Design */
+.invoice-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.invoice-table th, 
+.invoice-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.invoice-table th {
+  background: #eee;
+  font-weight: bold;
+}
+
+.invoice-table .item-name {
+  text-transform: capitalize;
+  text-align: left;
+  font-weight: bold;
+}
+
+/* Summary Panel aur Shart ke liye Naya Layout */
+.invoice-summary-section {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  gap: 20px;
+}
+
+/* Left side: Rules */
+.invoice-terms {
+  flex: 1;
+  text-align: left;
+  font-size: 12px;
+  color: #555;
+  line-height: 1.5;
+  border-right: 1px solid #eee;
+  padding-right: 10px;
+}
+
+.invoice-terms h4 {
+  margin: 0 0 5px 0;
+  color: #333;
+}
+
+.invoice-terms p {
+  margin: 2px 0;
+}
+
+/* Right side: Calculations */
+.invoice-totals {
+  flex: 1;
+  text-align: right;
+  line-height: 2;
+}
+
+.invoice-totals p {
+  margin: 0;
+  font-size: 15px;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px dashed #eee;
+}
+
+.text-success {
+  color: #28a745;
+}
+
+.text-danger {
+  color: #dc3545;
+}
+
+/* Signature System */
+.invoice-signatures {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 50px;
+  padding-top: 10px;
+}
+
+.sig-box {
+  width: 200px;
+  text-align: center;
+  font-size: 13px;
+  color: #444;
+}
+
+.sig-line {
+  border-top: 1px solid #444;
+  margin-top: 40px;
+  margin-bottom: 5px;
+}
+
+.status-right {
+  text-align: right;
+}
+
+.status-right .sig-line {
+  margin-top: 10px;
+}
+
+/* Buttons Section */
+.invoice-actions {
+  margin-top: 30px;
+  display: flex;
+  gap: 10px;
+}
+
+.invoice-actions button {
+  padding: 12px;
+  flex: 1;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.btn-print {
+  background: #28a745;
+  color: white;
+}
+
+.btn-close {
+  background: #6c757d; /* Close button thoda professional gray rang ka kiya hai */
+  color: white;
+}
+
+/* ========================================================
+   🖨️ PERFECT PRINT SETTINGS (FALTU CHEEZEIN GAYAB KARNE KE LIYE)
+   ======================================================== */
+@media print {
+  /* Poori website ke baki saare hisso ko chhupa do */
+  body * {
+    visibility: hidden;
+  }
+  
+  /* Sirf invoice overlay aur uske andar ki cheezon ko dikhao */
+  .invoice-overlay, .invoice-overlay * {
+    visibility: visible;
+  }
+  
+  /* Parchi ko page par upar se bilkul sahi jagah set karein */
+  .invoice-overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .invoice-modal {
+    box-shadow: none !important;
+    border: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 10px !important;
+    margin: 0 !important;
+  }
+
+  /* Parchi ke buttons ko print me mat chhaapo */
+  .no-print, .invoice-actions, .btn-print, .btn-close {
+    display: none !important;
+  }
+}

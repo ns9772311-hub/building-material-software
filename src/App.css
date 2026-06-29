@@ -1,0 +1,79 @@
+/* Purani saari default settings ko khatam karne ke liye */
+html, body, #root {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100vw !important;
+  min-height: 100vh !important;
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%) !important;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+  box-sizing: border-box !important;
+  overflow-x: hidden !important;
+}
+
+/* Pure Monitor Par Phailne Wala Box */
+.main-app-container {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: 100vh !important;
+  padding: 24px !important;
+  box-sizing: border-box !important;
+}
+
+/* Software Title Header */
+.software-header {
+  text-align: center !important;
+  margin-bottom: 30px !important;
+  padding: 10px 0 !important;
+}
+
+.software-header h1 {
+  color: #0f172a !important; /* Deep Charcoal Blue */
+  margin: 0 0 8px 0 !important;
+  font-size: 34px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1.5px !important;
+}
+
+/* Title ke niche sunder blue line */
+.header-divider {
+  height: 5px !important;
+  width: 160px !important;
+  background: linear-gradient(90deg, #2563eb, #1d4ed8) !important;
+  margin: 0 auto !important;
+  border-radius: 10px !important;
+}
+
+/* Dono Bade Section (Form aur Khata Box) Ka Chamakdar White Design */
+.billing-card {
+  width: 100% !important;
+  background-color: #ffffff !important;
+  padding: 30px !important;
+  border-radius: 14px !important;
+  /* Premium Shadow taaki software ekdam suthra ubhar ke dikhe */
+  box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.04), 0 4px 6px -4px rgba(15, 23, 42, 0.04) !important;
+  margin-bottom: 35px !important;
+  border: 1px solid #e2e8f0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Card ke andar headings ke samne professional custom tag line */
+.card-title-container {
+  padding-left: 14px !important;
+  margin-bottom: 25px !important;
+}
+
+.card-title-container.blue-badge {
+  border-left: 5px solid #2563eb !important; /* Form ke liye Dark Blue tag */
+}
+
+.card-title-container.green-badge {
+  border-left: 5px solid #10b981 !important; /* Khata Table ke liye Green tag */
+}
+
+.card-title-container h2 {
+  margin: 0 !important;
+  color: #1e293b !important;
+  font-size: 22px !important;
+  font-weight: 700 !important;
+}

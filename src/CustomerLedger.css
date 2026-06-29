@@ -1,0 +1,171 @@
+.ledger-container {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  margin-top: 30px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ledger-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 20px;
+}
+
+.search-wrapper {
+  margin-bottom: 20px;
+}
+
+.search-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 8px;
+}
+
+.ledger-search-input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 15px;
+  outline: none;
+  background-color: #f8fafc;
+  box-sizing: border-box;
+}
+
+/* ✨ FILTER BUTTONS CSS */
+.filter-buttons-container {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.filter-btn {
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.all-btn {
+  background-color: #f1f5f9;
+  color: #475569;
+}
+.all-btn.active {
+  background-color: #ffffff;
+  border-color: #475569;
+}
+
+.dues-btn {
+  background-color: #fef2f2;
+  color: #dc2626;
+}
+.dues-btn.active {
+  background-color: #dc2626;
+  color: #ffffff;
+  box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.2);
+}
+
+.paid-btn {
+  background-color: #f0fdf4;
+  color: #16a34a;
+}
+.paid-btn.active {
+  background-color: #16a34a;
+  color: #ffffff;
+  box-shadow: 0 4px 6px -1px rgba(22, 163, 74, 0.2);
+}
+
+/* Table Design */
+.table-responsive {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.ledger-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 14px;
+}
+
+.ledger-table th {
+  background-color: #1e293b;
+  color: #ffffff;
+  padding: 12px;
+  font-weight: 600;
+}
+
+.ledger-table td {
+  padding: 12px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #334155;
+  vertical-align: top;
+}
+
+.customer-name-cell {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.area-tag {
+  display: block;
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.item-detail-line {
+  font-size: 12px;
+  background-color: #f1f5f9;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  text-transform: capitalize;
+}
+
+.amount-cell {
+  font-weight: 600;
+}
+
+.jama-cell {
+  color: #16a34a;
+}
+
+.baki-cell.has-dues {
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.baki-cell.no-dues {
+  color: #64748b;
+}
+
+.no-data-msg {
+  text-align: center;
+  padding: 30px !important;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.parchi-btn {
+  background-color: #0284c7;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.parchi-btn:hover {
+  background-color: #0369a1;
+}
