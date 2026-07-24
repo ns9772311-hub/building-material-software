@@ -8,6 +8,7 @@ import InvoiceModal from './InvoiceModal';
 import BillFilters from './BillFilters'; // 👈 Aapka original component yahan barkarar hai
 import OrderForm from './OrderForm';     // 👈 Nayi Order form file import ki hai
 import { printThermalReceipt } from './printReceipt'; // 👈 Nayi print file ko import kiya
+import InventoryManager from './InventoryManager';
 
 function App() {
   const [bills, setBills] = useState([]);
@@ -433,6 +434,13 @@ function App() {
               </table>
             </div>
           )}
+        </div>
+      )}
+
+      {/* 🏬 🔥 NAYA STOCK / GODOWN VIEW BLOCK 👇 */}
+      {currentView === 'inventory' && (
+        <div style={{ backgroundColor: '#fff', padding: '15px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+          <InventoryManager />
         </div>
       )}
 
