@@ -181,7 +181,8 @@ setBillTerms(editData.terms || '1. Bika hua maal wapas nahi hoga.\n2. Udhari ka 
     const defaultInventory = [
       { id: '1', name: 'CEMENT', unit: 'Bags', stockQty: 100 },
       { id: '2', name: 'LOHA 6MM', unit: 'KG', stockQty: 500 },
-      { id: '3', name: 'BALU (SAND)', unit: 'CFT', stockQty: 2000 }
+      { id: '3', name: 'BALU (SAND)', unit: 'CFT', stockQty: 2000 },
+      { id: '4', name: 'Tals', unit: 'sankya', stockQty: 2000 }
     ];
 
     let currentStock = JSON.parse(localStorage.getItem('material_inventory')) || defaultInventory;
