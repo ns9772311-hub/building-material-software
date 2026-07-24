@@ -176,6 +176,34 @@ setBillTerms(editData.terms || '1. Bika hua maal wapas nahi hoga.\n2. Udhari ka 
   const totalFinalPaid = totalPastPaid + currentNewPaid;
   const totalRemaining = finalCalculatedTotal - totalFinalPaid;
 
+  // 📉 STOCK AUTOMATIC MINUS KARNE WALA HELPER FUNCTION
+  const updateStockAfterSale = (soldItems) => {
+    const defaultInventory = [
+      { id: '1', name: 'CEMENT', unit: 'Bags', stockQty: 100 },
+      { id: '2', name: 'LOHA 6MM', unit: 'KG', stockQty: 500 },
+      { id: '3', name: 'BALU (SAND)', unit: 'CFT', stockQty: 2000 }
+    ];
+
+    let currentStock = JSON.parse(localStorage.getItem('material_inventory')) || defaultInventory;
+
+    Object.keys(soldItems).forEach((itemKey) => {
+      const soldQty = parseFloat(soldItems[itemKey].qty) || 0;
+      
+      // Clean name for matching
+      let cleanName = itemKey.replace('other_', '').replace(/_/g, ' ').toLowerCase().trim();
+
+      const itemIndex = currentStock.findIndex(
+        inv => inv.name.toLowerCase().trim() === cleanName
+      );
+
+      if (itemIndex !== -1 && soldQty > 0) {
+        currentStock[itemIndex].stockQty = Math.max(0, currentStock[itemIndex].stockQty - soldQty);
+      }
+    });
+
+    localStorage.setItem('material_inventory', JSON.stringify(currentStock));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -230,6 +258,8 @@ setBillTerms(editData.terms || '1. Bika hua maal wapas nahi hoga.\n2. Udhari ka 
   paidAmount: totalFinalPaid,  
   remaining: totalRemaining
 };
+updateStockAfterSale(finalItems);
+
     onSaveBill(billObject);
     resetForm();
     alert(editData ? "🎉 Sabhi badlavo ke sath Bill successfully update ho gaya!" : "🎉 Naya Bill surakshit save ho gaya!");
