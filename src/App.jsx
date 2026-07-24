@@ -1,34 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import './App.css'; // Premium CSS file yahan apply ho rhi hai
-import AdvanceDepositForm from './AdvanceDepositForm'; // 👈 Yeh line nayi import hui hai
-import DailyCashBook from './DailyCashBook'; // 👈 Yeh line sabse upar add karein
+import AdvanceDepositForm from './AdvanceDepositForm';
+import DailyCashBook from './DailyCashBook';
 import BillForm from './BillForm';
 import BillHistory from './BillHistory';
 import InvoiceModal from './InvoiceModal';
-import BillFilters from './BillFilters'; // 👈 Aapka original component yahan barkarar hai
-import OrderForm from './OrderForm';     // 👈 Nayi Order form file import ki hai
-import { printThermalReceipt } from './printReceipt'; // 👈 Nayi print file ko import kiya
-import InventoryManager from './InventoryManager';
+import BillFilters from './BillFilters';
+import OrderForm from './OrderForm';
+import { printThermalReceipt } from './printReceipt';
+import InventoryManager from './InventoryManager'; // 👈 Agar Godown folder me ho toh './Godown/InventoryManager' kar lena
 
 function App() {
   const [bills, setBills] = useState([]);
   const [selectedBill, setSelectedBill] = useState(null);
-  const [printFormat, setPrintFormat] = useState('A4'); // Parchi format ke liye status
+  const [printFormat, setPrintFormat] = useState('A4');
 
-  // 🔄 NAVIGATION STATE (Default screen 'bill' rahegi)
+  // 🔄 NAVIGATION STATE
   const [currentView, setCurrentView] = useState('bill'); 
-  const [orders, setOrders] = useState([]); // 📝 Orders state data localstorage tracking ke liye
+  const [orders, setOrders] = useState([]);
 
-  // ✏️ EDITING STATE (Jo bill edit hona hai, usko yahan store karenge taaki direct form me khule)
+  // ✏️ EDITING STATE
   const [editingBill, setEditingBill] = useState(null);
 
-  // ⚙️ FILTERS STATES (Aapki ye states bilkul safe hain, koi badlav nahi)
+  // ⚙️ FILTERS STATES
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all'); 
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 
-  // 💾 1. LOCALSTORAGE SE DATA LOAD (App khulte hi saare puraane bill aur orders load honge)
+  // 💾 1. LOCALSTORAGE SE DATA LOAD
   useEffect(() => {
     const savedBills = localStorage.getItem('material_bills');
     if (savedBills) {
@@ -40,6 +40,33 @@ function App() {
       setOrders(JSON.parse(savedOrders));
     }
   }, []);
+
+  // 📉 1B. AUTOMATIC STOCK MINUS LOGIC
+  const updateStockAfterSale = (itemsSold) => {
+    if (!itemsSold) return;
+    const defaultInventory = [
+      { id: '1', name: 'CEMENT', unit: 'Bags', stockQty: 100 },
+      { id: '2', name: 'LOHA 6MM', unit: 'KG', stockQty: 500 },
+      { id: '3', name: 'BALU (SAND)', unit: 'CFT', stockQty: 2000 }
+    ];
+
+    let currentStock = JSON.parse(localStorage.getItem('material_inventory')) || defaultInventory;
+
+    Object.keys(itemsSold).forEach((itemKey) => {
+      const soldQty = parseFloat(itemsSold[itemKey].qty) || 0;
+      let cleanName = itemKey.replace('other_', '').replace(/_/g, ' ').toLowerCase().trim();
+
+      const itemIndex = currentStock.findIndex(
+        inv => inv.name.toLowerCase().trim() === cleanName
+      );
+
+      if (itemIndex !== -1 && soldQty > 0) {
+        currentStock[itemIndex].stockQty = Math.max(0, currentStock[itemIndex].stockQty - soldQty);
+      }
+    });
+
+    localStorage.setItem('material_inventory', JSON.stringify(currentStock));
+  };
 
   // 💾 2. LOCALSTORAGE ME DATA SAVE & UPDATE LOGIC
   const handleSaveBill = (newBill) => {
@@ -55,20 +82,24 @@ function App() {
     
     setBills(updatedBills);
     localStorage.setItem('material_bills', JSON.stringify(updatedBills));
+
+    // 🎯 🔥 STOCK AUTOMATIC MINUS TRIGGER
+    if (newBill && newBill.items) {
+      updateStockAfterSale(newBill.items);
+    }
   };
 
-  // 💾 2B. ORDER SAVE LOGIC (Naye advance orders ko localstorage me daalne ke liye)
+  // 💾 2B. ORDER SAVE LOGIC
   const handleSaveOrder = (newOrder) => {
     const updatedOrders = [newOrder, ...orders];
     setOrders(updatedOrders);
     localStorage.setItem('material_orders', JSON.stringify(updatedOrders));
   };
 
-  // 🔥 2C. AUTOMATIC DELIVERY TO BILL SYSTEM (With Live Multi-Rate Math Calculation)
+  // 🔥 2C. AUTOMATIC DELIVERY TO BILL SYSTEM
   const handleDeliverOrder = (orderId) => {
     let deliveredOrderData = null;
     
-    // Status update logic (Pending 🔴 to Delivered 🟢)
     const updatedOrders = orders.map(order => {
       if (order.id === orderId) {
         deliveredOrderData = { ...order, status: 'Delivered' };
@@ -81,7 +112,6 @@ function App() {
     localStorage.setItem('material_orders', JSON.stringify(updatedOrders));
 
     if (deliveredOrderData) {
-      // 📊 Sabhi saaman ke likhwaye hue rate ke aadhar par Total Value automatic calculate karein
       let calculatedTotal = 0;
       Object.keys(deliveredOrderData.items).forEach(k => {
         const item = deliveredOrderData.items[k];
@@ -89,7 +119,7 @@ function App() {
       });
 
       const automaticBillFromOrder = {
-        id: 'BILL-FROM-' + orderId, // Rollback tracking verification key
+        id: 'BILL-FROM-' + orderId,
         date: new Date().toLocaleDateString('en-GB'), 
         customer: deliveredOrderData.customer, 
         items: deliveredOrderData.items,       
@@ -110,12 +140,15 @@ function App() {
       const updatedBills = [automaticBillFromOrder, ...bills];
       setBills(updatedBills);
       localStorage.setItem('material_bills', JSON.stringify(updatedBills));
+
+      // 🎯 Delivery hote hi Stock minus karein
+      updateStockAfterSale(deliveredOrderData.items);
       
       alert("🟢 Saaman Deliver ho gaya! Aur Tay Rate ke hisab se Bill automatic save ho chuka hai.");
     }
   };
 
-  // ↩️ 2D. GREEN TO RED ROLLBACK LOGIC (Dhoke se delivery hone par restore karne ke liye)
+  // ↩️ 2D. GREEN TO RED ROLLBACK LOGIC
   const handleUnDeliverOrder = (orderId) => {
     if (window.confirm("Kya aap sach me is Delivered saaman ko wapas Pending (Red) karna chahte hain? (Iska automatic bana bill khata se delete ho jayega)")) {
       const updatedOrders = orders.map(order => {
@@ -127,7 +160,6 @@ function App() {
       setOrders(updatedOrders);
       localStorage.setItem('material_orders', JSON.stringify(updatedOrders));
 
-      // Automatic bane bill ko dashboard ledger history se permanently delete karein
       const updatedBills = bills.filter(b => b.id !== 'BILL-FROM-' + orderId);
       setBills(updatedBills);
       localStorage.setItem('material_bills', JSON.stringify(updatedBills));
@@ -151,7 +183,7 @@ function App() {
   // ✏️ 4. SET BILL FOR EDITING
   const handleEditBill = (bill) => {
     setEditingBill(bill);
-    setCurrentView('bill'); // Edit click karne par automatic bill wale tab par le jayega
+    setCurrentView('bill');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -170,7 +202,7 @@ function App() {
     }
   };
 
-  // 🔍 7. ADVANCED FILTER LOGIC (Original configuration filters intact)
+  // 🔍 7. ADVANCED FILTER LOGIC
   const finalFilteredBills = bills.filter(bill => {
     let matchesSearch = true;
     if (searchTerm.trim()) {
@@ -225,7 +257,7 @@ function App() {
         <div className="header-divider" style={{ height: '3px', width: '80px', backgroundColor: '#007bff', margin: '10px auto' }}></div>
       </div>
 
-      {/* 🔝 5 PREMIUM TABS CONTROL (Daily Cashbook Button Added) */}
+      {/* 🔝 6 PREMIUM TABS CONTROL (Stock / Godown Button Included) */}
       <div style={{ display: 'flex', gap: '15px', marginBottom: '25px', justifyContent: 'center', flexWrap: 'wrap' }}>
         
         <button onClick={() => setCurrentView('bill')} style={{ padding: '12px 25px', fontSize: '15px', fontWeight: 'bold', borderRadius: '6px', cursor: 'pointer', background: currentView === 'bill' ? '#007bff' : '#fff', color: currentView === 'bill' ? '#fff' : '#007bff', border: '2px solid #007bff' }}>
@@ -236,7 +268,6 @@ function App() {
           💰 Sirf Advance Paisa Jama
         </button>
 
-        {/* 👇 YEH AASMANI BUTTON DAILY TRANSACATIONS KE LIYE NAYA JODNA TRANSACTIONS BOARD LIYE 👇 */}
         <button onClick={() => setCurrentView('dailyCashbookView')} style={{ padding: '12px 25px', fontSize: '15px', fontWeight: 'bold', borderRadius: '6px', cursor: 'pointer', background: currentView === 'dailyCashbookView' ? '#3498db' : '#fff', color: currentView === 'dailyCashbookView' ? '#fff' : '#3498db', border: '2px solid #3498db' }}>
           💸 Daily Kharch & Cash Hisab
         </button>
@@ -249,10 +280,13 @@ function App() {
           📋 Saari Order List (Track Delivery)
         </button>
 
+        {/* 🏬 🔥 YAHAN ADD HUA STOCK / GODOWN KA CLICK BUTTON 👇 */}
+        <button onClick={() => setCurrentView('inventory')} style={{ padding: '12px 25px', fontSize: '15px', fontWeight: 'bold', borderRadius: '6px', cursor: 'pointer', background: currentView === 'inventory' ? '#16a085' : '#fff', color: currentView === 'inventory' ? '#fff' : '#16a085', border: '2px solid #16a085' }}>
+          🏬 Stock / Godown
+        </button>
+
       </div>
 
-  
-      
       {/* 🔄 CONDITIONAL ROUTING CONDITIONS BASED ON NAVIGATION TABS */}
       {currentView === 'bill' && (
         <>
@@ -300,16 +334,14 @@ function App() {
         </div>
       )}
 
-      {/* 👇 YAHAN PAR ADVANCE DEPOSIT KA SCREEN APNE AAP OPEN HONA START HO JAYEGA 👇 */}
       {currentView === 'advanceDepositView' && (
         <div style={{ backgroundColor: '#fff', padding: '15px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
-          {/* Ekdam clean—bina bills list me mix kiye alag rendering code */}
           <AdvanceDepositForm onClose={() => setCurrentView('bill')} />
         </div>
       )}
+
       {currentView === 'dailyCashbookView' && (
         <div style={{ backgroundColor: '#fff', padding: '15px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
-          {/* Daily Kharch entry page and its unique list register inside code */}
           <DailyCashBook onClose={() => setCurrentView('bill')} />
         </div>
       )}
@@ -319,7 +351,6 @@ function App() {
         <div style={{ backgroundColor: '#fff', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
           <h3 style={{ borderBottom: '2px solid #e67e22', paddingBottom: '10px', color: '#e67e22', marginTop: '0' }}>🚚 Order Delivery Tracking Board</h3>
           
-          {/* 🔍 NEW ADVANCE ORDER SEARCH BAR (YEH INPUT BOX NAYA JODA HAI) */}
           <div style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
             <input 
               type="text" 
@@ -362,7 +393,6 @@ function App() {
                   </tr>
                 </thead>
                 <tbody>
-                  {/* 📊 LIVE ADVANCE SEARCH FILTER APPLIED HERE */}
                   {orders
                     .filter(order => {
                       if (!searchTerm || !searchTerm.trim()) return true;
@@ -418,7 +448,6 @@ function App() {
                       </tr>
                     ))}
 
-                  {/* ⚠️ AGAR FILTER SE KOI RECORD NA MATCH KARE TOH WARNING MESSAGE */}
                   {orders.filter(order => {
                     if (!searchTerm || !searchTerm.trim()) return true;
                     const word = searchTerm.toLowerCase().trim();
@@ -444,7 +473,7 @@ function App() {
         </div>
       )}
 
-      {/* Bill Invoice Parchi Pop-up (Format ke sath) */}
+      {/* Bill Invoice Parchi Pop-up */}
       <InvoiceModal bill={selectedBill} format={printFormat} onClose={() => setSelectedBill(null)} />
       
     </div>
