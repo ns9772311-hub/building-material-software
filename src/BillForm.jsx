@@ -258,7 +258,7 @@ setBillTerms(editData.terms || '1. Bika hua maal wapas nahi hoga.\n2. Udhari ka 
   paidAmount: totalFinalPaid,  
   remaining: totalRemaining
 };
-updateStockAfterSale(finalItems);
+
 
     onSaveBill(billObject);
     resetForm();
